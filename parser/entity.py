@@ -1,8 +1,22 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
+from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import sessionmaker, declarative_base
 
 
-class Review:
+Base = declarative_base()
+class Review(Base):
+
+    __tablename__ = 'reviews'
+    id = Column(Integer, primary_key=True)
+    dislike = Column(Integer)
+    like = Column(Integer)
+    review_text = Column(String)
+    author = Column(String)
+    review_rating = Column(Integer)
+    datetime = Column(DateTime)
+
+
     def __repr__(self):
         return repr(self.__dict__)
 
@@ -13,23 +27,22 @@ class Review:
         self.author = None
         self.review_rating = None
         self.datetime = None
-        self.selenium_id = None
 
         for key, value in kwargs.items():
             setattr(self, key, value)
 
     def parse_information(self, review_elem: WebElement):
-        self.selenium_id = review_elem.id
+
         # ISO 8601
         self.datetime = get_dict(
             review_elem,
             './/*[@class="business-review-view__date"]//*',
         )['datePublished'][0]
 
-        self.review_rating = get_dict(
+        self.review_rating = int(float(get_dict(
             review_elem,
             './/*[@itemtype="http://schema.org/Rating"]//*',
-        )['ratingValue'][0]
+        )['ratingValue'][0]))
 
         self.author = get_dict(
             review_elem,
@@ -41,15 +54,16 @@ class Review:
             "business-review-view__body-text"
         ).text
 
-        self.like = review_elem.find_element(
+        self.like = int(review_elem.find_element(
             By.CSS_SELECTOR,
             ".business-reactions-view__container:first-child"
-        ).text
+        ).text or "0")
 
-        self.dislike = review_elem.find_element(
+
+        self.dislike = int(review_elem.find_element(
             By.CSS_SELECTOR,
             ".business-reactions-view__container:nth-child(2)"
-        ).text
+        ).text or "0")
 
 
 def get_dict(parent_element: WebElement, value: str) -> dict:
