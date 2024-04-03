@@ -3,6 +3,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData, Table
+
+from parser.config import *
 from parser.entity import Review
 from sqlalchemy import create_engine
 from sqlalchemy import inspect
@@ -10,14 +12,14 @@ from sqlalchemy import inspect
 
 def increaseReviews(driver, reviews):
     driver.execute_script("arguments[0].scrollIntoView(true);", reviews[-1])
-    time.sleep(1.2)
+    time.sleep(time_sleep_gap_for_reviews_increase)
     reviews_container = driver.find_element(By.CLASS_NAME, "business-reviews-card-view__reviews-container")
     reviews = reviews_container.find_elements(By.CLASS_NAME, "business-review-view")
     return reviews
 
 
-def get_organization_reviews(org_id: int = 1124715036):
-    engine = create_engine("postgresql://postgres:admin@localhost:5433/yandexMaps")
+def get_organization_reviews(org_id: int = default_org_id):
+    engine = create_engine(connection_string)
     metadata = MetaData()
 
     if inspect(engine).has_table("reviews"):
