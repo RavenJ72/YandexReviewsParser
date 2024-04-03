@@ -10,7 +10,7 @@ from sqlalchemy import inspect
 
 def increaseReviews(driver, reviews):
     driver.execute_script("arguments[0].scrollIntoView(true);", reviews[-1])
-    time.sleep(0.5)
+    time.sleep(1.2)
     reviews_container = driver.find_element(By.CLASS_NAME, "business-reviews-card-view__reviews-container")
     reviews = reviews_container.find_elements(By.CLASS_NAME, "business-review-view")
     return reviews
@@ -36,13 +36,13 @@ def get_organization_reviews(org_id: int = 1124715036):
     # Block that loads all reviews
     reviews_container = driver.find_element(By.CLASS_NAME, "business-reviews-card-view__reviews-container")
     reviews = reviews_container.find_elements(By.CLASS_NAME, "business-review-view")
-    reviewsCounter = len(reviews)
-    if reviewsCounter > 49:
+    reviews_counter = len(reviews)
+    if reviews_counter > 49:
         while True:
             reviews = increaseReviews(driver, reviews)
-            if len(reviews) - reviewsCounter < 30:
+            if len(reviews) - reviews_counter < 30:
                 break
-            reviewsCounter = len(reviews)
+            reviews_counter = len(reviews)
 
     # TODO Remove double parsing
     reviews_selenium_elems = set()
@@ -58,7 +58,7 @@ def get_organization_reviews(org_id: int = 1124715036):
         session.add(new_review)
         session.commit()
 
-    print(len(reviews_selenium_elems) + " entities successfully added!")
+    print(str(len(reviews_selenium_elems)) + " entities successfully added!")
 
     driver.quit()
     engine.dispose()

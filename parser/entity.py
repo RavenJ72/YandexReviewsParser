@@ -1,12 +1,12 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webelement import WebElement
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, ForeignKey
-from sqlalchemy.orm import sessionmaker, declarative_base
-
+from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
-class Review(Base):
 
+
+class Review(Base):
     __tablename__ = 'reviews'
     id = Column(Integer, primary_key=True)
     dislike = Column(Integer)
@@ -15,7 +15,6 @@ class Review(Base):
     author = Column(String)
     review_rating = Column(Integer)
     datetime = Column(DateTime)
-
 
     def __repr__(self):
         return repr(self.__dict__)
@@ -32,7 +31,6 @@ class Review(Base):
             setattr(self, key, value)
 
     def parse_information(self, review_elem: WebElement):
-
         # ISO 8601
         self.datetime = get_dict(
             review_elem,
@@ -58,7 +56,6 @@ class Review(Base):
             By.CSS_SELECTOR,
             ".business-reactions-view__container:first-child"
         ).text or "0")
-
 
         self.dislike = int(review_elem.find_element(
             By.CSS_SELECTOR,

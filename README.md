@@ -13,15 +13,15 @@ Build and Run: The project's README.MD includes instructions on how to build and
 
 ## Building and running
 
-БД
+DB
 ```
 docker-compose up -d
 ```
-Запуск основого скрипта
+Running the main script
 ```
 python run.py --org_id 1124715036
 ```
-Вместо параметра org_id необходимо указать идентификатор организации.
+Instead of the org_id parameter, you must specify the organization identifier.
 
 | `url`                                                  | `org_id`   | `name`           |
 |--------------------------------------------------------|------------|------------------|
